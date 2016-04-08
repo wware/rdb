@@ -70,3 +70,8 @@ drwxrwxr-x   6 wware wware 4096 Apr  8 12:14 venv
 (Pdb) c
 Connection closed by foreign host.
 ```
+
+Distributed logging
+====
+
+TODO: document this, for now look at test_dlog.py
