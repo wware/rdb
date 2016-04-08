@@ -48,17 +48,17 @@ Escape character is '^]'.
 > /home/wware/rdb/rdb/__init__.py(55)set_trace()->None
 -> remote_pdb.RemotePdb.set_trace(self)
 (Pdb) l
- 50  	
- 51  	    def set_trace(self):
- 52  	        if self._notifier:
- 53  	            self._notifier._port = self._port
- 54  	            self._notifier.start()
- 55  ->	        remote_pdb.RemotePdb.set_trace(self)
- 56  	
- 57  	    # Be able to run shell commands
- 58  	    def do_sh(self, *args):
- 59  	        cmd = ' '.join(args)
- 60  	        print >>self.stdout, os.popen(cmd).read().rstrip()
+ 50
+ 51         def set_trace(self):
+ 52             if self._notifier:
+ 53                 self._notifier._port = self._port
+ 54                 self._notifier.start()
+ 55  ->         remote_pdb.RemotePdb.set_trace(self)
+ 56
+ 57         # Be able to run shell commands
+ 58         def do_sh(self, *args):
+ 59             cmd = ' '.join(args)
+ 60             print >>self.stdout, os.popen(cmd).read().rstrip()
 (Pdb) sh pwd
 /home/wware/tmp2
 (Pdb) sh ls -al
