@@ -14,30 +14,28 @@ def dig(obj, depth, _filter=None, callables=False):
         )
         return not dunder
 
-    if (
-        obj is None or
-        type(obj) in (
-            types.BooleanType, types.IntType, types.LongType,
-            types.FloatType, types.ComplexType,
-            str, unicode
-        ) or (
-            (not callables) and
+    # pylint: disable=unidiomatic-typecheck
+    if (obj is None or
             type(obj) in (
-                types.FunctionType, types.MethodType,
-                types.BuiltinFunctionType, types.BuiltinMethodType,
-                types.LambdaType
-            )
-        )
-    ):
+                types.BooleanType, types.IntType, types.LongType,
+                types.FloatType, types.ComplexType,
+                str, unicode
+            ) or (
+                (not callables) and
+                type(obj) in (
+                    types.FunctionType, types.MethodType,
+                    types.BuiltinFunctionType, types.BuiltinMethodType,
+                    types.LambdaType
+                ))):
         return obj
     elif isinstance(obj, list) or isinstance(obj, tuple):
         keys = xrange(len(obj))
         selector = lambda k, obj=obj: obj[k]
     elif isinstance(obj, dict):
-        keys = filter(skip_dunder, obj.keys())
+        keys = [key for key in obj.keys() if skip_dunder(key)]
         selector = lambda k, obj=obj: obj.get(k)
     else:
-        keys = filter(skip_dunder, dir(obj))
+        keys = [key for key in dir(obj) if skip_dunder(key)]
         selector = lambda k, obj=obj: getattr(obj, k)
 
     # collect = {'__type': type(obj)}

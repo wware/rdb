@@ -15,11 +15,12 @@ PDB commands: https://docs.python.org/2/library/pdb.html#debugger-commands\r
 
 
 class EmailNotifier(threading.Thread):
-    def __init__(self, smtp_server, sender, recipients):
+    def __init__(self, smtp_server, sender, recipients, port):
         threading.Thread.__init__(self)
         self._smtp_server = smtp_server
         self._sender = sender
         self._recipients = recipients
+        self._port = port
 
     def run(self):
         try:
@@ -48,13 +49,12 @@ class RemotePdb(remote_pdb.RemotePdb):
         self._port = port
         notifier = None
         if smtp_server and sender and recipients:
-            notifier = EmailNotifier(smtp_server, sender, recipients)
+            notifier = EmailNotifier(smtp_server, sender, recipients, port)
         self._notifier = notifier
         remote_pdb.RemotePdb.__init__(self, host, port, patch_stdstreams)
 
     def set_trace(self):
         if self._notifier:
-            self._notifier._port = self._port
             self._notifier.start()
         remote_pdb.RemotePdb.set_trace(self)
 

@@ -28,6 +28,7 @@ data = {
     'a': range(10),
     'b': [chr(i + ord('A')) for i in range(26)]
 }
+# pylint: disable=no-member
 logger.pprint(data)
 
 def f():
