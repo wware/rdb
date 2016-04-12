@@ -14,6 +14,8 @@ Run:  telnet <ipaddr> {2}\r
 where ipaddr is one of these: {3}\r
 \r
 PDB commands: https://docs.python.org/2/library/pdb.html#debugger-commands\r
+\r
+{4}\r
 """
 
 
@@ -31,12 +33,13 @@ def get_ip_addresses():
 
 
 class EmailNotifier(threading.Thread):
-    def __init__(self, smtp_server, sender, recipients, port):
+    def __init__(self, smtp_server, sender, recipients, port, note):
         threading.Thread.__init__(self)
         self._smtp_server = smtp_server
         self._sender = sender
         self._recipients = recipients
         self._port = port
+        self._note = note
 
     def run(self):
         try:
@@ -48,7 +51,8 @@ class EmailNotifier(threading.Thread):
                     self._sender,
                     ", ".join(self._recipients),
                     self._port,
-                    get_ip_addresses()
+                    get_ip_addresses(),
+                    self._note or ''
                 )
             )
             server.quit()
@@ -60,12 +64,12 @@ class RemotePdb(remote_pdb.RemotePdb):
 
     def __init__(self, host='0.0.0.0', port=4444,
                  smtp_server=None, sender=None, recipients=None,
-                 patch_stdstreams=False):
+                 note=None, patch_stdstreams=False):
         self._host = host
         self._port = port
         notifier = None
         if smtp_server and sender and recipients:
-            notifier = EmailNotifier(smtp_server, sender, recipients, port)
+            notifier = EmailNotifier(smtp_server, sender, recipients, port, note)
         self._notifier = notifier
         remote_pdb.RemotePdb.__init__(self, host, port, patch_stdstreams)
 
