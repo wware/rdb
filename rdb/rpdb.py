@@ -39,7 +39,7 @@ class EmailNotifier(threading.Thread):
         self._sender = sender
         self._recipients = recipients
         self._port = port
-        self._note = note
+        self._notetext = note
 
     def run(self):
         try:
@@ -52,7 +52,7 @@ class EmailNotifier(threading.Thread):
                     ", ".join(self._recipients),
                     self._port,
                     get_ip_addresses(),
-                    self._note or ''
+                    self._notetext or ''
                 )
             )
             server.quit()
