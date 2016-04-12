@@ -1,6 +1,7 @@
 import os
 import smtplib
 import socket
+import sys
 import threading
 import remote_pdb
 
@@ -9,9 +10,24 @@ _email = """From: {0}\r
 To: {1}\r
 Subject: Opening remote PDB telnet session\r
 \r
-Run:  telnet {2} {3}\r
+Run:  telnet <ipaddr> {2}\r
+where ipaddr is one of these: {3}\r
+\r
 PDB commands: https://docs.python.org/2/library/pdb.html#debugger-commands\r
 """
+
+
+def get_ip_addresses():
+    if sys.platform == 'cygwin':
+        cmd = 'ipconfig | grep IPv4 | sed "s/.*: //"'
+    else:
+        cmd = (
+            'ifconfig | grep "inet addr:.*Bcast" | ' +
+            'sed "s/.*addr://" | sed "s/ .*//"'
+        )
+    return ", ".join([
+        addr.strip() for addr in os.popen(cmd).readlines()
+    ])
 
 
 class EmailNotifier(threading.Thread):
@@ -31,8 +47,8 @@ class EmailNotifier(threading.Thread):
                 _email.format(
                     self._sender,
                     ", ".join(self._recipients),
-                    socket.gethostbyname(socket.gethostname()),
-                    self._port
+                    self._port,
+                    get_ip_addresses()
                 )
             )
             server.quit()
