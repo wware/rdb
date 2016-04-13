@@ -1,0 +1,30 @@
+<!doctype html>
+
+<head>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.2.3.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='jquery.dataTables.min.css') }}"></link>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"></link>
+</head>
+<body>
+    <title>Listener</title>
+    <h1>Listener</h1>
+    <table id="logTable" class="display">
+    </table>
+    <script type="text/javascript">
+    $(function() {
+        var table = $('#logTable').DataTable({
+            ajax: '/get_logs',
+            columns: [
+                {data:'created', title:'created'},
+                {data:'levelname', title:'levelname'},
+                {data:'pathname', title:'pathname'},
+                {data:'lineno', title:'lineno'},
+                {data:'funcName', title:'funcName'},
+                {data:'msg', title:'msg'},
+                {data:'exc_info', title:'exc_info'},
+            ]
+        });
+    });
+    </script>
+</body>
