@@ -5,6 +5,8 @@ import sys
 import threading
 import remote_pdb
 
+from .comms import get_host_ip
+
 
 _email = """From: {0}\r
 To: {1}\r
@@ -32,50 +34,29 @@ def get_ip_addresses():
     ])
 
 
-class EmailNotifier(threading.Thread):
-    def __init__(self, smtp_server, sender, recipients, port, note):
-        threading.Thread.__init__(self)
-        self._smtp_server = smtp_server
-        self._sender = sender
-        self._recipients = recipients
-        self._port = port
-        self._notetext = note
-
-    def run(self):
-        try:
-            server = smtplib.SMTP(self._smtp_server)
-            server.sendmail(
-                self._sender,
-                self._recipients,
-                _email.format(
-                    self._sender,
-                    ", ".join(self._recipients),
-                    self._port,
-                    get_ip_addresses(),
-                    self._notetext or ''
-                )
-            )
-            server.quit()
-        except:
-            pass
-
-
 class RemotePdb(remote_pdb.RemotePdb):
 
-    def __init__(self, host='0.0.0.0', port=4444,
-                 smtp_server=None, sender=None, recipients=None,
-                 note=None, patch_stdstreams=False):
-        self._host = host
+    def __init__(self, port=4444, patch_stdstreams=False):
         self._port = port
-        notifier = None
-        if smtp_server and sender and recipients:
-            notifier = EmailNotifier(smtp_server, sender, recipients, port, note)
-        self._notifier = notifier
-        remote_pdb.RemotePdb.__init__(self, host, port, patch_stdstreams)
+        remote_pdb.RemotePdb.__init__(self, '0.0.0.0', port, patch_stdstreams)
 
     def set_trace(self):
-        if self._notifier:
-            self._notifier.start()
+        host_ip = get_host_ip()
+        if host_ip is None:
+            return
+        my_ips = get_ip_addresses()
+        try:
+            params = urllib.urlencode(json.dumps(
+                dict(ips=my_ips, port=self.port)
+            ))
+            headers = {"Content-type": "application/x-www-form-urlencoded",
+                       "Accept": "text/plain"}
+            conn = httplib.HTTPConnection(host_ip + ':5000')
+            conn.request("POST", "/rdb", params, headers)
+            conn.getresponse()
+            conn.close()
+        except:
+            pass
         remote_pdb.RemotePdb.set_trace(self)
 
     # Be able to run shell commands

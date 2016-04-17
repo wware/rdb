@@ -1,11 +1,17 @@
+import httplib
 import logging
 import pprint
 import traceback
 import socket
 import time
+import urllib
 
 from flask import Flask, request
 import requests
+
+from .comms import get_host_ip
+
+_host_getter = None
 
 
 def json_record(record):
@@ -21,14 +27,22 @@ def json_record(record):
 
 
 class DistributedHandler(logging.Handler):
-    def __init__(self, uri):
+    def __init__(self):
         logging.Handler.__init__(self)
-        self.uri = uri
 
     def emit(self, record):
+        host_ip = get_host_ip()
+        if host_ip is None:
+            return
         try:
-            requests.post(self.uri, data=json_record(record))
-        except requests.exceptions.ConnectionError:
+            params = urllib.urlencode(json_record(record))
+            headers = {"Content-type": "application/x-www-form-urlencoded",
+                       "Accept": "text/plain"}
+            conn = httplib.HTTPConnection(host_ip + ':5000')
+            conn.request("POST", "/log", params, headers)
+            conn.getresponse()
+            conn.close()
+        except:
             pass
 
 
@@ -47,26 +61,3 @@ def extendLogger(logger):
                 stuff[-1] = stuff[-1].rstrip()
             logger._log(logging.INFO, ''.join(stuff), [])
     logger.stack = _stack
-
-
-def dlogReceiver(port=5000):
-    # Stifle most Werkzeug output.
-    logging.getLogger('werkzeug').setLevel(logging.ERROR)
-    app = Flask(__name__, static_url_path="")
-
-    @app.route('/log/', methods=['POST'])
-    def post():
-        client = socket.gethostbyaddr(request.remote_addr)[0]
-        print '{0} [{1}] <{2}> {3}:{4} {5}\n{6}\n'.format(
-            client,
-            request.form['levelname'],
-            time.ctime(float(request.form['created'])),
-            request.form['pathname'],
-            request.form['lineno'],
-            request.form['funcName'],
-            request.form['msg']
-            # exc_info????
-        )
-        return '', 200
-
-    app.run(host="0.0.0.0", port=port, debug=True)
