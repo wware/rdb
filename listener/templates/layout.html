@@ -8,22 +8,46 @@
 <body>
     <title>Listener</title>
     <h1>Listener</h1>
+    <div>
+        Toggle column:
+        <a href="#" class="toggle-vis" data-column="0">Created</a> -
+        <a href="#" class="toggle-vis" data-column="1">IP Address</a> -
+        <a href="#" class="toggle-vis" data-column="2">Level Name</a> -
+        <a href="#" class="toggle-vis" data-column="3">Pathname</a> -
+        <a href="#" class="toggle-vis" data-column="4">Line Number</a> -
+        <a href="#" class="toggle-vis" data-column="5">Function Name</a> -
+        <a href="#" class="toggle-vis" data-column="7">Exception</a><br/>
+        <a href="#" id="refresh">Refresh</a>
+    </div>
     <table id="logTable" class="display">
     </table>
     <script type="text/javascript">
     $(function() {
+        var columns = [
+            {data:'created', title:'Created', 'visiblity': true},
+            {data:'ipaddr', title:'IP Address', 'visiblity': true},
+            {data:'levelname', title:'Level Name', 'visiblity': true},
+            {data:'pathname', title:'Pathname', 'visiblity': true},
+            {data:'lineno', title:'Line Number', 'visiblity': true},
+            {data:'funcName', title:'Function Name', 'visiblity': true},
+            {data:'msg', title:'Log Message',
+             render: function(data, type, full, meta) {
+                return '<pre>' + data + '</pre>';
+             }
+            },
+            {data:'exc_info', title:'Exception', 'visiblity': true},
+        ];
         var table = $('#logTable').DataTable({
             ajax: '/get_logs',
-            columns: [
-                {data:'created', title:'created'},
-                {data:'ipaddr', title:'ipaddr'},
-                {data:'levelname', title:'levelname'},
-                {data:'pathname', title:'pathname'},
-                {data:'lineno', title:'lineno'},
-                {data:'funcName', title:'funcName'},
-                {data:'msg', title:'msg'},
-                {data:'exc_info', title:'exc_info'},
-            ]
+            columns: columns
+        });
+        $('a.toggle-vis').on( 'click', function (e) {
+            e.preventDefault();
+            var column = table.column($(this).attr('data-column'));
+            column.visible(!column.visible());
+        });
+        $('#refresh').click(function() {
+            table.ajax.reload();
         });
     });
     </script>

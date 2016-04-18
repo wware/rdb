@@ -1,8 +1,10 @@
 import httplib
 import logging
 import pprint
+import time
 import traceback
 import urllib
+from math import fmod
 
 from rdb import comms
 
@@ -18,14 +20,13 @@ def json_record(record):
         'funcName': record.funcName,
         'exc_info': record.exc_info,
         'msg': record.msg,
-        'created': record.created
+        'created':
+            time.strftime('%H:%M:%S', time.localtime(record.created)) +
+            ("%.04f" % fmod(record.created, 1.0))[1:]
     }
 
 
 class DistributedHandler(logging.Handler):
-    def __init__(self):
-        logging.Handler.__init__(self)
-
     def emit(self, record):
         host_ip = comms.get_host_ip()
         if host_ip is None:

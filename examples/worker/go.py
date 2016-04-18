@@ -8,6 +8,13 @@ import random
 import threading
 import time
 
+from werkzeug.exceptions import abort
+from flask import Flask
+app = Flask(__name__)
+app.debug = True
+
+logging.basicConfig(filename='/shared/worker.log', level=logging.DEBUG)
+
 ##########
 
 def get_listener_ip_address():
@@ -20,17 +27,8 @@ def get_listener_ip_address():
 import rdb
 rdb.setup_comms("eth0", get_listener_ip_address)
 logger = rdb.getLogger()
-logger.setLevel(logging.DEBUG)
 
 ##########
-
-from werkzeug.exceptions import abort
-from flask import Flask
-app = Flask(__name__)
-app.debug = True
-
-# logging.basicConfig(filename='/shared/worker.log', level=logging.DEBUG)
-# logging.info('Log stuff from the worker')
 
 jobs = {}
 results = {}

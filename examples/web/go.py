@@ -7,7 +7,7 @@ from flask import Flask, render_template
 app = Flask(__name__)
 app.config['debug'] = True
 
-logging.basicConfig(filename='/shared/web.log', level=logging.INFO)
+logging.basicConfig(filename='/shared/web.log', level=logging.DEBUG)
 
 
 def get_addresses():

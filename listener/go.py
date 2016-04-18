@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
 import json
+import logging
 from werkzeug.exceptions import abort
 from flask import Flask, request, render_template
 app = Flask(__name__)
+
+logging.basicConfig(filename='/shared/listener.log', level=logging.DEBUG)
+logging.info("Here is the listener log")
 
 logs = []
 
