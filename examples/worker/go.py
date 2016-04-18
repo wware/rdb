@@ -17,6 +17,8 @@ logging.basicConfig(filename='/shared/worker.log', level=logging.DEBUG)
 
 ##########
 
+import rdb
+
 def get_listener_ip_address():
     for line in open('/shared/addresses').readlines():
         host, addr = line.strip().split('=')
@@ -24,7 +26,6 @@ def get_listener_ip_address():
             return addr
     return None
 
-import rdb
 rdb.setup_comms("eth0", get_listener_ip_address)
 logger = rdb.getLogger()
 
@@ -40,7 +41,7 @@ def acq():
     if LOCK_DEBUG:
         stack = inspect.stack()
         frame = stack[1]
-        logging.debug('%s:%d acquire lock' % frame[1:3])
+        logger.debug('%s:%d acquire lock' % frame[1:3])
     lock.acquire()
 
 def rel():
@@ -48,7 +49,7 @@ def rel():
     if LOCK_DEBUG:
         stack = inspect.stack()
         frame = stack[1]
-        logging.debug('%s:%d release lock' % frame[1:3])
+        logger.debug('%s:%d release lock' % frame[1:3])
 
 
 class Job(threading.Thread):
@@ -113,7 +114,23 @@ def jdump(x):
 
 @app.route('/start')
 def start():
-    logger.info('start job')
+    logging.info('start job')
+    j = Job()
+    j.start()
+    return jdump(j.data)
+
+
+@app.route('/start-debug')
+def start_with_debug():
+    try:
+        logging.info('start job with debug')
+        if False:
+            # don't actually start a RemotePdb yet
+            rdb.rpdb.inform(rdb.comms.get_host_ip(), 4444)
+        else:
+            rdb.RemotePdb().set_trace()
+    except Exception as e:
+        logging.exception(e)
     j = Job()
     j.start()
     return jdump(j.data)

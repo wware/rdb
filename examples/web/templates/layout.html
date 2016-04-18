@@ -10,6 +10,7 @@
     <title>Job Queue</title>
     <h1>Job Queue</h1>
     <button class="start">Start a job</button>
+    <button class="start-debug">Start a job with debug</button>
     <button class="clear">Clear everything</button>
     <table id="jobTable" class="display"></table>
     <table id="resultTable" class="display"></table>
@@ -42,6 +43,12 @@
                 table.ajax.reload();
                 table2.ajax.reload();
             }, 200);
+        });
+        $('.start-debug').click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/start-debug"
+            });
         });
         $('.clear').click(function (e) {
             e.preventDefault();

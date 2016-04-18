@@ -24,9 +24,17 @@ def hello_world():
 
 
 @app.route('/start')
-def do_work():
+def start():
     addrs = get_addresses()
     r = requests.get('http://%s:5000/start' % addrs['worker'])
+    assert r.status_code == 200, r.text
+    return r.text
+
+
+@app.route('/start-debug')
+def start_with_debug():
+    addrs = get_addresses()
+    r = requests.get('http://%s:5000/start-debug' % addrs['worker'])
     assert r.status_code == 200, r.text
     return r.text
 
@@ -41,18 +49,14 @@ def get_jobs():
     addrs = get_addresses()
     r = requests.get('http://%s:5000/all' % addrs['worker'])
     assert r.status_code == 200, r.text
-    j = '{"data":' + r.text + '}'
-    logging.info(j)
-    return j
+    return '{"data":' + r.text + '}'
 
 @app.route('/results')
 def get_results():
     addrs = get_addresses()
     r = requests.get('http://%s:5000/results' % addrs['worker'])
     assert r.status_code == 200, r.text
-    j = '{"data":' + r.text + '}'
-    logging.info(j)
-    return j
+    return '{"data":' + r.text + '}'
 
 @app.route('/clear')
 def clear_everything():

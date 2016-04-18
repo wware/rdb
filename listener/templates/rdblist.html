@@ -1,0 +1,6 @@
+{% for rdb in rdblist %}
+  <button class="remove {{rdb.id}}">Done</button>
+  <textarea class="copyable {{rdb.id}}"
+   rows="1" cols="30">telnet {{ rdb.ipaddr }} {{ rdb.port }}</textarea>
+  <button class="copy {{rdb.id}}">Copy</button><br/>
+{% endfor %}

@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -19,7 +20,7 @@ def setup_comms(local_if, get_host):
             'sed "s/.*addr://" | sed "s/ .*//"'
         )
     _local_ip = os.popen(cmd).readline().strip()
-    # logging.info((local_if, _local_ip, get_host))
+    logging.info((local_if, _local_ip, get_host))
     _host_getter = get_host
 
 

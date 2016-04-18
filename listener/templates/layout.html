@@ -9,6 +9,8 @@
 <body>
     <title>Listener</title>
     <h1>Listener</h1>
+    <div id="rdbTable">
+    </div>
     <div>
         Toggle column:
         <a href="#" class="toggle-vis" data-column="0">Created</a> -
@@ -20,12 +22,42 @@
         <a href="#" class="toggle-vis" data-column="7">Exception</a><br/>
     </div>
     <div style="padding-top: 0.5cm">
-        <a href="#" id="refresh">Refresh</a>
+        <a href="#" id="refresh">Refresh log table</a>
     </div>
     <table id="logTable" class="page display">
     </table>
     <script type="text/javascript">
+    function refresh_rdb_table() {
+        $("#rdbTable").load(
+            "/check-rdb",
+            function() {
+                $("button.remove").click(function(e) {
+                    var clst = e.target.classList;
+                    $.ajax("/rdb-done/" + clst[1]).done(function() {
+                        refresh_rdb_table();
+                    });
+                });
+                $("button.copy").click(function(e) {
+                    var clst = e.target.classList;
+                    console.log("/rdb-done/" + clst[1]);
+                    $('textarea.copyable.' + clst[1]).select();
+                    try {
+                        if (!document.execCommand('copy')) {
+                            console.log('Copying text command was unsuccessful');
+                        }
+                    } catch (err) {
+                        console.log('Unable to copy');
+                    }
+                });
+            }
+        );
+    }
     $(function() {
+        refresh_rdb_table();
+        setInterval(function() {
+            refresh_rdb_table();
+        }, 1000);   // refresh once per second
+
         var columns = [
             {data:'created', title:'Created', render:
                 function(data, type, full, meta) {
@@ -44,17 +76,17 @@
                     );
                 },
              'visiblity': true},
-            {data:'ipaddr', title:'IP Address', 'visiblity': true},
-            {data:'levelname', title:'Level Name', 'visiblity': true},
-            {data:'pathname', title:'Pathname', 'visiblity': true},
-            {data:'lineno', title:'Line Number', 'visiblity': true},
-            {data:'funcName', title:'Function Name', 'visiblity': true},
+            {data:'ipaddr', title:'IP Address'},
+            {data:'levelname', title:'Level Name'},
+            {data:'pathname', title:'Pathname'},
+            {data:'lineno', title:'Line Number'},
+            {data:'funcName', title:'Function Name'},
             {data:'msg', title:'Log Message', render:
                 function(data, type, full, meta) {
                     return '<pre>' + data + '</pre>';
                 }
             },
-            {data:'exc_info', title:'Exception', 'visiblity': true},
+            {data:'exc_info', title:'Exception'},
         ];
         var table = $('#logTable').DataTable({
             ajax: '/get_logs',
