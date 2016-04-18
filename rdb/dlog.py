@@ -9,13 +9,14 @@ import urllib
 from flask import Flask, request
 import requests
 
-from .comms import get_host_ip
+import comms
 
 _host_getter = None
 
 
 def json_record(record):
     return {
+        'ipaddr': comms._local_ip,
         'levelname': record.levelname,
         'pathname': record.pathname,
         'lineno': record.lineno,
@@ -31,7 +32,7 @@ class DistributedHandler(logging.Handler):
         logging.Handler.__init__(self)
 
     def emit(self, record):
-        host_ip = get_host_ip()
+        host_ip = comms.get_host_ip()
         if host_ip is None:
             return
         try:

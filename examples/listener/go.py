@@ -42,6 +42,7 @@ def get_logs():
 @app.route('/log', methods = ['POST'])
 def post_log():
     log = {
+        'ipaddr': request.form['ipaddr'],
         'levelname': request.form['levelname'],
         'pathname': request.form['pathname'],
         'lineno': request.form['lineno'],

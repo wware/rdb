@@ -4,6 +4,7 @@ import datetime
 import inspect
 import json
 import logging
+import os
 import random
 import threading
 import time
@@ -18,7 +19,7 @@ def get_listener_ip_address():
     return None
 
 import rdb
-rdb.listener(get_listener_ip_address)
+rdb.setup_comms("eth0", get_listener_ip_address)
 logger = rdb.getLogger()
 logger.setLevel(logging.DEBUG)
 

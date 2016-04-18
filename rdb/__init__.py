@@ -1,4 +1,6 @@
 import logging
+import os
+
 from .rpdb import RemotePdb
 import comms
 from .dlog import DistributedHandler, extendLogger
@@ -7,8 +9,14 @@ from .digger import dig
 _loggers = {}
 
 
-def listener(get_host):
+def setup_comms(local_if, get_host):
     _loggers.clear()
+    # will this work with cygwin?
+    _ip = os.popen(
+        'ifconfig ' + local_if +
+        ' | grep "inet addr" | sed "s/ *B.*//" | sed "s/.*://"'
+    )
+    comms._local_ip = _ip.readline().strip()
     comms._host_getter = get_host
 
 
