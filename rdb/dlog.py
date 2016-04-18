@@ -20,9 +20,7 @@ def json_record(record):
         'funcName': record.funcName,
         'exc_info': record.exc_info,
         'msg': record.msg,
-        'created':
-            time.strftime('%H:%M:%S', time.localtime(record.created)) +
-            ("%.04f" % fmod(record.created, 1.0))[1:]
+        'created': record.created
     }
 
 

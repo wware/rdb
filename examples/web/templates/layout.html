@@ -1,7 +1,7 @@
 <!doctype html>
 
 <head>
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.2.3.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.2.3.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='jquery.dataTables.min.css') }}"></link>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"></link>
@@ -19,21 +19,22 @@
             ajax: '/jobsdata',
             bPaginate: false,
             columns: [
-                {data: "id", title: "id"},
+                {data: "id", title: "id", "type": "int"},
                 {data: "begin", title: "begin"},
                 {data: "end", title: "end"},
-                {data: "duration", title: "duration"}
+                {data: "duration", title: "duration", "type": "int"}
             ]
         });
         var table2 = $('#resultTable').DataTable({
             ajax: '/results',
             bPaginate: false,
             columns: [
-                {data: "id", title: "id"},
-                {data: "result", title: "result"}
+                {data: "id", title: "id", "type": "int"},
+                {data: "result", title: "result", "type": "int"}
             ]
         });
-        $('.start').click(function (evt) {
+        $('.start').click(function (e) {
+            e.preventDefault();
             $.ajax({
                 url: "/start"
             });
@@ -42,7 +43,8 @@
                 table2.ajax.reload();
             }, 200);
         });
-        $('.clear').click(function (evt) {
+        $('.clear').click(function (e) {
+            e.preventDefault();
             $.ajax({
                 url: "/clear"
             });

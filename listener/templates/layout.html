@@ -3,6 +3,7 @@
 <head>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.2.3.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='strftime-min.js') }}"></script>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='jquery.dataTables.min.css') }}"></link>
 </head>
 <body>
@@ -17,23 +18,41 @@
         <a href="#" class="toggle-vis" data-column="4">Line Number</a> -
         <a href="#" class="toggle-vis" data-column="5">Function Name</a> -
         <a href="#" class="toggle-vis" data-column="7">Exception</a><br/>
+    </div>
+    <div style="padding-top: 0.5cm">
         <a href="#" id="refresh">Refresh</a>
     </div>
-    <table id="logTable" class="display">
+    <table id="logTable" class="page display">
     </table>
     <script type="text/javascript">
     $(function() {
         var columns = [
-            {data:'created', title:'Created', 'visiblity': true},
+            {data:'created', title:'Created', render:
+                function(data, type, full, meta) {
+                    data = parseFloat(data);
+                    Date.prototype.stdTimezoneOffset = function() {
+                        var jan = new Date(this.getFullYear(), 0, 1);
+                        var jul = new Date(this.getFullYear(), 6, 1);
+                        return Math.max(jan.getTimezoneOffset(),
+                            jul.getTimezoneOffset());
+                    }
+                    return strftime(
+                        '%H:%M:%S.%L',
+                        new Date(parseFloat(
+                            data - 60000 * new Date().stdTimezoneOffset()
+                        ))
+                    );
+                },
+             'visiblity': true},
             {data:'ipaddr', title:'IP Address', 'visiblity': true},
             {data:'levelname', title:'Level Name', 'visiblity': true},
             {data:'pathname', title:'Pathname', 'visiblity': true},
             {data:'lineno', title:'Line Number', 'visiblity': true},
             {data:'funcName', title:'Function Name', 'visiblity': true},
-            {data:'msg', title:'Log Message',
-             render: function(data, type, full, meta) {
-                return '<pre>' + data + '</pre>';
-             }
+            {data:'msg', title:'Log Message', render:
+                function(data, type, full, meta) {
+                    return '<pre>' + data + '</pre>';
+                }
             },
             {data:'exc_info', title:'Exception', 'visiblity': true},
         ];
@@ -41,12 +60,13 @@
             ajax: '/get_logs',
             columns: columns
         });
-        $('a.toggle-vis').on( 'click', function (e) {
+        $('a.toggle-vis').click(function (e) {
             e.preventDefault();
             var column = table.column($(this).attr('data-column'));
             column.visible(!column.visible());
         });
-        $('#refresh').click(function() {
+        $('#refresh').click(function(e) {
+            e.preventDefault();
             table.ajax.reload();
         });
     });

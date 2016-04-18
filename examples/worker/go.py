@@ -59,7 +59,7 @@ class Job(threading.Thread):
         acq()
         i = workid
         workid += 1
-        jobs[str(i)] = self
+        jobs[i] = self
         rel()
 
         self._id = i
@@ -70,7 +70,7 @@ class Job(threading.Thread):
     def run(self):
         time.sleep(self._duration)
         i = self.id
-        result = str(int(1000000 * random.random()))
+        result = int(1000000 * random.random())
         try:
             acq()
             results[i] = result
@@ -82,7 +82,7 @@ class Job(threading.Thread):
 
     @property
     def id(self):
-        return str(self._id)
+        return self._id
 
     @property
     def duration(self):
