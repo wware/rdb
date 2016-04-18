@@ -4,7 +4,6 @@ import datetime
 import inspect
 import json
 import logging
-import os
 import random
 import threading
 import time
@@ -176,7 +175,7 @@ def get_results():
 def all():
     try:
         acq()
-        all_jobs = [v.data for k, v in jobs.items()]
+        all_jobs = [v.data for _, v in jobs.items()]
     except Exception as e:
         logging.exception(e)
     finally:

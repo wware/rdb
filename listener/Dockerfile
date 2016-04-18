@@ -4,9 +4,7 @@ MAINTAINER Will Ware <wware@alum.mit.edu>
 RUN apt-get update -y
 RUN apt-get install -y python-virtualenv python-pip git
 
-# RUN pip install https://github.com/wware/rdb/archive/master.zip
-COPY rdb /rdb
-RUN pip install -e /rdb
+RUN pip install https://github.com/wware/rdb/archive/master.zip
 
 COPY templates /templates
 COPY static /static

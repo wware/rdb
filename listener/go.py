@@ -1,23 +1,11 @@
 #!/usr/bin/env python
 
-import httplib
 import json
-import logging
-import requests
 from werkzeug.exceptions import abort
-from flask import Flask, request, render_template, send_from_directory, url_for
+from flask import Flask, request, render_template
 app = Flask(__name__)
 
-logging.basicConfig(filename='/shared/listener.log', level=logging.DEBUG)
-
 logs = []
-
-def get_addresses():
-    d = {}
-    for line in open('/shared/addresses').readlines():
-        host, addr = line.strip().split('=')
-        d[host] = addr
-    return d
 
 @app.route('/')
 def index():
@@ -39,7 +27,7 @@ def get_logs():
     return jtable(logs)
 
 
-@app.route('/log', methods = ['POST'])
+@app.route('/log', methods=['POST'])
 def post_log():
     log = {
         'ipaddr': request.form['ipaddr'],
@@ -54,10 +42,10 @@ def post_log():
     logs.append(log)
     return ''
 
-@app.route('/rdb', methods = ['POST'])
+@app.route('/rdb', methods=['POST'])
 def post_rdb():
-    logging.info(request.form)
-    return ''
+    # Not implemented yet
+    abort(501)
 
 if __name__ == '__main__':
     app.run('0.0.0.0')

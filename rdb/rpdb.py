@@ -1,11 +1,8 @@
 import os
-import smtplib
-import socket
 import sys
-import threading
 import remote_pdb
 
-from .comms import get_host_ip
+from .comms import get_host_ip, _local_ip
 
 
 _email = """From: {0}\r

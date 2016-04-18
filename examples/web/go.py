@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-import json
 import logging
 import requests
 
-from werkzeug.exceptions import abort
 from flask import Flask, render_template
 app = Flask(__name__)
 app.config['debug'] = True

@@ -2,14 +2,9 @@ import httplib
 import logging
 import pprint
 import traceback
-import socket
-import time
 import urllib
 
-from flask import Flask, request
-import requests
-
-import comms
+from rdb import comms
 
 _host_getter = None
 
