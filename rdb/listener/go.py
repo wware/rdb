@@ -5,11 +5,11 @@ import logging
 from werkzeug.exceptions import abort
 from flask import Flask, request, render_template
 
+# Don't enable logging, there is a 1-second polling loop in the JavaScript, so
+# you'll fill up the file system unnecessarily.
+# logging.basicConfig(filename='/var/log/rdb-listener.log', level=logging.INFO)
+
 app = Flask(__name__)
-
-logging.basicConfig(filename='/shared/listener.log', level=logging.DEBUG)
-logging.info("Here is the listener log")
-
 logs = []
 rdbid = 0
 
@@ -59,12 +59,9 @@ def post_rdb():
 
 @app.route('/check-rdb', methods=['GET'])
 def get_rdb():
-    logging.info(rdb_sessions)
     sessions = [
         {'id': id, 'ipaddr': ipaddr, 'port': port} for id, ipaddr, port in rdb_sessions
     ]
-    logging.info(sessions)
-    logging.info(render_template('rdblist.html', rdblist=sessions))
     return render_template('rdblist.html', rdblist=sessions)
 
 @app.route('/rdb-done/<n>')

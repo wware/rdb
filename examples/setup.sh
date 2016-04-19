@@ -13,7 +13,7 @@ getaddr() {
 }
 
 build() {
-    docker build -t $1 $DIR/$1 || exit 1
+    docker build -t $1 $DIR/$2 || exit 1
 }
 
 run() {
@@ -25,9 +25,15 @@ shell() {
 }
 
 ######################
+# Build everybody
+
+build web web
+build worker worker
+build listener ../rdb/listener
+
+######################
 # First set up the listener
 
-docker build -t listener $DIR/../listener || exit 1
 run -p 127.0.0.1:5000:5000 --name listener listener
 getaddr listener
 echo listener=$addr > $DIR/shared/addresses
@@ -40,9 +46,6 @@ for D in web worker; do
     cp ../setup.py $DIR/$D/rdb
     cp -r ../rdb $DIR/$D/rdb
 done
-
-build web
-build worker
 
 run -p 127.0.0.1:5002:5000 --name worker worker
 getaddr worker
