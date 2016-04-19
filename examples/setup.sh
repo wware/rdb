@@ -48,7 +48,7 @@ for D in web worker; do
 done
 
 # run -p 127.0.0.1:5002:5000 --name worker worker
-run --name worker worker
+run -p 0.0.0.0:4444:4444 --name worker worker
 getaddr worker
 echo worker=$addr >> $DIR/shared/addresses
 
