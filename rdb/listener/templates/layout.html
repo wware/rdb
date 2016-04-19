@@ -29,36 +29,26 @@
     <table id="logTable" class="display">
     </table>
     <script type="text/javascript">
+    var previous_rdb_table = '';
     function refresh_rdb_table() {
-        $("#rdbTable").load(
-            "/check-rdb",
-            function() {
+        $.ajax('/check-rdb').done(function(x) {
+            if (x != previous_rdb_table) {
+                $('#rdbTable').html(x);
+                previous_rdb_table = x;
                 $("button.remove").click(function(e) {
                     var clst = e.target.classList;
                     $.ajax("/rdb-done/" + clst[1]).done(function() {
                         refresh_rdb_table();
                     });
                 });
-                $("button.copy").click(function(e) {
-                    var clst = e.target.classList;
-                    console.log("/rdb-done/" + clst[1]);
-                    $('textarea.copyable.' + clst[1]).select();
-                    try {
-                        if (!document.execCommand('copy')) {
-                            console.log('Copying text command was unsuccessful');
-                        }
-                    } catch (err) {
-                        console.log('Unable to copy');
-                    }
-                });
             }
-        );
+        });
     }
     $(function() {
         refresh_rdb_table();
         setInterval(function() {
             refresh_rdb_table();
-        }, 1000);   // refresh once per second
+        }, 10 * 1000);
 
         var columns = [
             {data:'created', title:'Created', render:
