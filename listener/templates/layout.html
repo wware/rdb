@@ -5,6 +5,8 @@
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='strftime-min.js') }}"></script>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='jquery.dataTables.min.css') }}"></link>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"></link>
+</head>
 </head>
 <body>
     <title>Listener</title>
@@ -24,7 +26,7 @@
     <div style="padding-top: 0.5cm">
         <a href="#" id="refresh">Refresh log table</a>
     </div>
-    <table id="logTable" class="page display">
+    <table id="logTable" class="display">
     </table>
     <script type="text/javascript">
     function refresh_rdb_table() {
