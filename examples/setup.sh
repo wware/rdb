@@ -34,7 +34,7 @@ build listener ../rdb/listener
 ######################
 # First set up the listener
 
-run -p 127.0.0.1:5000:5000 --name listener listener
+run -p 0.0.0.0:5000:5000 --name listener listener
 getaddr listener
 echo listener=$addr > $DIR/shared/addresses
 
@@ -47,11 +47,12 @@ for D in web worker; do
     cp -r ../rdb $DIR/$D/rdb
 done
 
-run -p 127.0.0.1:5002:5000 --name worker worker
+# run -p 127.0.0.1:5002:5000 --name worker worker
+run --name worker worker
 getaddr worker
 echo worker=$addr >> $DIR/shared/addresses
 
-run -p 127.0.0.1:5001:5000 --name web web
+run -p 0.0.0.0:5001:5000 --name web web
 getaddr web
 echo web=$addr >> shared/addresses
 
