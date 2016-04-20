@@ -31,9 +31,6 @@ class RemotePdb(remote_pdb.RemotePdb):
         inform(host_ip, port)
         remote_pdb.RemotePdb.__init__(self, '0.0.0.0', port, False)
 
-    def set_trace(self):
-        remote_pdb.RemotePdb.set_trace(self)
-
     # Be able to run shell commands
     def do_sh(self, *args):
         cmd = ' '.join(args)
