@@ -122,15 +122,8 @@ def start():
 
 @app.route('/start-debug')
 def start_with_debug():
-    try:
-        logging.info('start job with debug')
-        if False:
-            # don't actually start a RemotePdb yet
-            rdb.rpdb.inform(rdb.comms.get_host_ip(), 4444)
-        else:
-            rdb.RemotePdb().set_trace()
-    except Exception as e:
-        logging.exception(e)
+    logging.info('start job with debug')
+    rdb.RemotePdb().set_trace()
     j = Job()
     j.start()
     return jdump(j.data)
