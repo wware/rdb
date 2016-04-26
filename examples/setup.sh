@@ -27,6 +27,12 @@ shell() {
 ######################
 # Build everybody
 
+for D in web worker; do
+    mkdir -p $DIR/$D/rdb
+    cp ../setup.py $DIR/$D/rdb
+    cp -r ../rdb $DIR/$D/rdb
+done
+
 build web web
 build worker worker
 build listener ../rdb/listener
@@ -40,12 +46,6 @@ echo listener=$addr > $DIR/shared/addresses
 
 #####################
 # Now set up the other guys
-
-for D in web worker; do
-    mkdir -p $DIR/$D/rdb
-    cp ../setup.py $DIR/$D/rdb
-    cp -r ../rdb $DIR/$D/rdb
-done
 
 # run -p 127.0.0.1:5002:5000 --name worker worker
 run -p 0.0.0.0:4444:4444 --name worker worker
