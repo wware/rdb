@@ -4,7 +4,6 @@ import os
 import sys
 import threading
 import urllib
-import remote_pdb
 
 import comms
 
@@ -23,15 +22,3 @@ def inform(host_ip, port):
     except Exception as e:
         logging.exception(e)
 
-
-
-class RemotePdb(remote_pdb.RemotePdb):
-    def __init__(self, port=4444):
-        host_ip = comms.get_host_ip()
-        inform(host_ip, port)
-        remote_pdb.RemotePdb.__init__(self, '0.0.0.0', port, False)
-
-    # Be able to run shell commands
-    def do_sh(self, *args):
-        cmd = ' '.join(args)
-        print >>self.stdout, os.popen(cmd).read().rstrip()

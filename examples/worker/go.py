@@ -7,6 +7,9 @@ import logging
 import random
 import threading
 import time
+import os
+
+os.environ['PUDB_RDB_HOST'] = '0.0.0.0'
 
 from werkzeug.exceptions import abort
 from flask import Flask
@@ -123,7 +126,8 @@ def start():
 @app.route('/start-debug')
 def start_with_debug():
     logging.info('start job with debug')
-    rdb.RemotePdb().set_trace()
+    from pudb.remote import set_trace
+    set_trace(term_size=(160, 50))
     j = Job()
     j.start()
     return jdump(j.data)

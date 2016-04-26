@@ -9,5 +9,5 @@ setup(
     author='Will Ware',
     author_email='wware@alum.mit.edu',
     packages=['rdb'],
-    install_requires=['remote-pdb', 'Flask'],
+    install_requires=['pudb', 'Flask'],
 )

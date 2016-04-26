@@ -1,6 +1,5 @@
 import logging
 
-from .rpdb import RemotePdb
 from .dlog import DistributedHandler, extendLogger
 from .digger import dig
 from .comms import setup_comms, _loggers

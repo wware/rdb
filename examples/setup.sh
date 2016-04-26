@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git clean -xdf ..
+
 DIR=$(cd $(dirname "$0") && pwd)
 addr=""
 
